@@ -12,12 +12,13 @@ var StudentStudyPrograms string = "TI_Teknik Informatika, TK_Teknik Komputer, SI
 
 func Login(id string, name string) string {
 	var major string
-	if len(id) < 5 {
+	if id == "" || name == "" {
+		fmt.Println("ID or Name is undefined!")
+		return ""
+	}
+
+	if len(id) < 5 || len(id) > 5 {
 		fmt.Println("ID must be 5 characters long!")
-		if id == "" || name == "" {
-			fmt.Println("ID or Name is undefined!")
-			return ""
-		}
 		return ""
 	}
 
@@ -38,21 +39,22 @@ func Login(id string, name string) string {
 
 	}
 	if loginSuccess {
-		fmt.Printf("Login Success: %s (%s)\n", name, major)
+		fmt.Printf("Login berhasil: %s (%s)\n", name, major)
 	} else {
-		fmt.Println("ID Tidak ditemukan")
+		fmt.Println("Login gagal: data mahasiswa tidak ditemukan")
 	}
 
 	return ""
 }
 
 func Register(id string, name string, major string) string {
-	if len(id) < 5 {
+	if id == "" || name == "" || major == "" {
+		fmt.Println("ID, Name or Major is undefined!")
+		return ""
+	}
+
+	if len(id) < 5 || len(id) > 5 {
 		fmt.Println("ID must be 5 characters long!")
-		if id == "" || name == "" {
-			fmt.Println("ID, Name or Major is undefined!")
-			return ""
-		}
 		return ""
 	}
 	parts := strings.Split(Students, ",")
@@ -60,7 +62,7 @@ func Register(id string, name string, major string) string {
 		arr := strings.Fields(mhs)
 		idMhs := strings.Split(arr[0], "_")
 		if id == idMhs[0] {
-			fmt.Println("ID is already taken!")
+			fmt.Println("Registrasi gagal: id sudah digunakan")
 			return ""
 		}
 	}
@@ -124,9 +126,9 @@ func main() {
 			helper.ClearScreen()
 			var id, name string
 			fmt.Print("Masukkan id: ")
-			fmt.Scan(&id)
+			fmt.Scanln(&id)
 			fmt.Print("Masukkan name: ")
-			fmt.Scan(&name)
+			fmt.Scanln(&name)
 
 			fmt.Println(Login(id, name))
 
@@ -135,11 +137,11 @@ func main() {
 			helper.ClearScreen()
 			var id, name, jurusan string
 			fmt.Print("Masukkan id: ")
-			fmt.Scan(&id)
+			fmt.Scanln(&id)
 			fmt.Print("Masukkan name: ")
-			fmt.Scan(&name)
+			fmt.Scanln(&name)
 			fmt.Print("Masukkan jurusan: ")
-			fmt.Scan(&jurusan)
+			fmt.Scanln(&jurusan)
 			fmt.Println(Register(id, name, jurusan))
 
 			helper.Delay(5)
@@ -148,10 +150,6 @@ func main() {
 			var kode string
 			fmt.Print("Masukkan kode: ")
 			fmt.Scanln(&kode)
-			// if kode != "" {
-			// 	break
-			// }
-			// fmt.Println("Code is undefined!")
 			fmt.Println(GetStudyProgram(kode))
 			helper.Delay(5)
 		case "4":
