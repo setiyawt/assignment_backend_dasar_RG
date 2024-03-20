@@ -13,16 +13,13 @@ var StudentStudyPrograms string = "TI_Teknik Informatika, TK_Teknik Komputer, SI
 func Login(id string, name string) string {
 	var major string
 	if id == "" || name == "" {
-		fmt.Println("ID or Name is undefined!")
-		return ""
+		return "ID or Name is undefined!"
 	}
 
-	if len(id) < 5 || len(id) > 5 {
-		fmt.Println("ID must be 5 characters long!")
-		return ""
+	if len(id) != 5 {
+		return "ID must be 5 characters long!"
 	}
 
-	loginSuccess := false
 	parts := strings.Split(Students, ",")
 	for _, mhs := range parts {
 		mhs = strings.TrimSpace(mhs)
@@ -32,51 +29,42 @@ func Login(id string, name string) string {
 		majorMhs := arr[2]
 
 		if id == idMhs && name == nameMhs {
-			loginSuccess = true
 			major = majorMhs
-			break
+			return fmt.Sprintf("Login berhasil: %s (%s)", name, major)
 		}
-
 	}
-	if loginSuccess {
-		fmt.Printf("Login berhasil: %s (%s)\n", name, major)
-	} else {
-		fmt.Println("Login gagal: data mahasiswa tidak ditemukan")
-	}
-
-	return ""
+	return "Login gagal: data mahasiswa tidak ditemukan"
 }
 
 func Register(id string, name string, major string) string {
 	if id == "" || name == "" || major == "" {
-		fmt.Println("ID, Name or Major is undefined!")
-		return ""
+		return "ID, Name or Major is undefined!"
 	}
 
-	if len(id) < 5 || len(id) > 5 {
-		fmt.Println("ID must be 5 characters long!")
-		return ""
+	if len(id) != 5 {
+		return "ID must be 5 characters long!"
 	}
+
 	parts := strings.Split(Students, ",")
 	for _, mhs := range parts {
-		arr := strings.Fields(mhs)
-		idMhs := strings.Split(arr[0], "_")
-		if id == idMhs[0] {
-			fmt.Println("Registrasi gagal: id sudah digunakan")
-			return ""
+		arr := strings.Split(mhs, "_")
+		idMhs := arr[0]
+		if id == idMhs {
+			return "Registrasi gagal: id sudah digunakan"
 		}
 	}
-	Students += fmt.Sprintf(", %s_%s_%s", id, name, major)
-	fmt.Println("Registrasi berhasil: ", name, "(", major, ")")
-	return ""
+
+	Students += fmt.Sprintf(",%s_%s_%s", id, name, major)
+	return fmt.Sprintf("Registrasi berhasil: %s (%s)", name, major)
 }
 
 func GetStudyProgram(code string) string {
 	if code == "" {
-		fmt.Println("Code is undefined!")
+
+		return "Code is undefined!"
 	} else {
 		parts := strings.Split(StudentStudyPrograms, ",")
-		codeNotFound := true
+
 		for _, prody := range parts {
 			arr := strings.Fields(prody)
 			code_prody := strings.Split(arr[0], "_")
@@ -91,16 +79,12 @@ func GetStudyProgram(code string) string {
 				case "MI":
 					return "Manajemen Informasi"
 				}
-				codeNotFound = false
-				break
 
 			}
 		}
-		if codeNotFound {
-			fmt.Println("Code not found")
-		}
 	}
-	return ""
+
+	return "Code is undefined!"
 }
 
 func main() {
