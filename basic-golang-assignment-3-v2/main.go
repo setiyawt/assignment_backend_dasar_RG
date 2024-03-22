@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -18,11 +19,11 @@ type StudentManager interface {
 }
 
 type InMemoryStudentManager struct {
-	students             []model.Student
-	studentStudyPrograms map[string]string
+	students             []model.Student   //slice
+	studentStudyPrograms map[string]string //map
 }
 
-func NewInMemoryStudentManager() *InMemoryStudentManager {
+func NewInMemoryStudentManager() *InMemoryStudentManager { //parameter berupa pointer
 	return &InMemoryStudentManager{
 		students: []model.Student{
 			{
@@ -41,7 +42,7 @@ func NewInMemoryStudentManager() *InMemoryStudentManager {
 				StudyProgram: "MI",
 			},
 		},
-		studentStudyPrograms: map[string]string{
+		studentStudyPrograms: map[string]string{ //map
 			"TI": "Teknik Informatika",
 			"TK": "Teknik Komputer",
 			"SI": "Sistem Informasi",
@@ -51,19 +52,55 @@ func NewInMemoryStudentManager() *InMemoryStudentManager {
 }
 
 func (sm *InMemoryStudentManager) GetStudents() []model.Student {
-	return nil // TODO: replace this
+
+	return nil
 }
 
 func (sm *InMemoryStudentManager) Login(id string, name string) (string, error) {
-	return "", nil // TODO: replace this
+	if id == "" || name == "" {
+		return "", errors.New("ID or Name is undifined")
+	}
+	for _, student := range sm.students {
+		if student.ID == id && student.Name == name {
+			return "Login berhasil: " + name, nil
+		}
+	}
+	return "", errors.New("Login gagal: data mahasiswa tidak ditemukan")
 }
 
 func (sm *InMemoryStudentManager) Register(id string, name string, studyProgram string) (string, error) {
-	return "", nil // TODO: replace this
+	if id == "" || name == "" || studyProgram == "" {
+		return "", errors.New("ID, Name or StudyProgram is undefined!")
+	}
+	for _, student := range sm.students {
+		if student.ID == id {
+			return "", errors.New("Registrasi gagal: id sudah digunakan")
+		} else {
+			sm.students = append(sm.students, model.Student{
+				ID:           id,
+				Name:         name,
+				StudyProgram: studyProgram,
+			})
+		}
+	}
+	if _, true := sm.studentStudyPrograms[studyProgram]; !true {
+		return "", fmt.Errorf("Study program %s is not found", studyProgram)
+	}
+
+	return fmt.Sprintf("Registrasi berhasil: %s (%s)", name, sm.studentStudyPrograms[studyProgram]), nil
 }
 
 func (sm *InMemoryStudentManager) GetStudyProgram(code string) (string, error) {
-	return "", nil // TODO: replace this
+	if code == "" {
+		return "", errors.New("Code is undefined!")
+	}
+	for _, student := range sm.students {
+		if student.StudyProgram != code {
+			return "", errors.New("Kode program studi tidak ditemukan")
+		}
+	}
+
+	return sm.studentStudyPrograms[code], nil // TODO: replace this
 }
 
 func (sm *InMemoryStudentManager) ModifyStudent(name string, fn model.StudentModifier) (string, error) {
