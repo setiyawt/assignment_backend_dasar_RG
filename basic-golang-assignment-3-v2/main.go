@@ -52,8 +52,7 @@ func NewInMemoryStudentManager() *InMemoryStudentManager { //parameter berupa po
 }
 
 func (sm *InMemoryStudentManager) GetStudents() []model.Student {
-
-	return nil
+	return sm.students
 }
 
 func (sm *InMemoryStudentManager) Login(id string, name string) (string, error) {
@@ -75,19 +74,19 @@ func (sm *InMemoryStudentManager) Register(id string, name string, studyProgram 
 	for _, student := range sm.students {
 		if student.ID == id {
 			return "", errors.New("Registrasi gagal: id sudah digunakan")
-		} else {
-			sm.students = append(sm.students, model.Student{
-				ID:           id,
-				Name:         name,
-				StudyProgram: studyProgram,
-			})
 		}
 	}
+
 	if _, true := sm.studentStudyPrograms[studyProgram]; !true {
 		return "", fmt.Errorf("Study program %s is not found", studyProgram)
 	}
-
-	return fmt.Sprintf("Registrasi berhasil: %s (%s)", name, sm.studentStudyPrograms[studyProgram]), nil
+	NewStudent := model.Student{
+		ID:           id,
+		Name:         name,
+		StudyProgram: studyProgram,
+	}
+	sm.students = append(sm.students, NewStudent)
+	return fmt.Sprintf("Registrasi berhasil: %s (%s)", name, studyProgram), nil
 }
 
 func (sm *InMemoryStudentManager) GetStudyProgram(code string) (string, error) {
@@ -95,23 +94,31 @@ func (sm *InMemoryStudentManager) GetStudyProgram(code string) (string, error) {
 		return "", errors.New("Code is undefined!")
 	}
 	for _, student := range sm.students {
-		if student.StudyProgram != code {
-			return "", errors.New("Kode program studi tidak ditemukan")
+		if student.StudyProgram == code {
+			return sm.studentStudyPrograms[code], nil
 		}
 	}
 
-	return sm.studentStudyPrograms[code], nil // TODO: replace this
+	return "", errors.New("Kode program studi tidak ditemukan")
 }
 
 func (sm *InMemoryStudentManager) ModifyStudent(name string, fn model.StudentModifier) (string, error) {
-	return "", nil // TODO: replace this
+	for i, student := range sm.students {
+		if student.Name == name {
+			fn(&student)
+			sm.students[i] = student
+			return "Program studi mahasiswa berhasil diubah.", nil
+
+		}
+	}
+	return "", errors.New("Mahasiswa tidak ditemukan.")
 }
 
 func (sm *InMemoryStudentManager) ChangeStudyProgram(programStudi string) model.StudentModifier {
-	// return func(s *model.Student) error {
-	// 	return func(s *Student) error {} // TODO: replace this
-	// }
-	return nil
+	return func(s *model.Student) error {
+		s.StudyProgram = programStudi
+		return nil
+	}
 }
 
 func main() {
