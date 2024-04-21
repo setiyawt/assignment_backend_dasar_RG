@@ -42,7 +42,7 @@ func NewInMemoryStudentManager() *InMemoryStudentManager { //parameter berupa po
 				StudyProgram: "MI",
 			},
 		},
-		studentStudyPrograms: map[string]string{ //map
+		studentStudyPrograms: map[string]string{
 			"TI": "Teknik Informatika",
 			"TK": "Teknik Komputer",
 			"SI": "Sistem Informasi",
