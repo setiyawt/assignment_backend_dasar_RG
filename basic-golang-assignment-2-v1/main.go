@@ -99,7 +99,7 @@ func ModifyStudent(programStudi, nama string, fn studentModifier) string {
 }
 
 func UpdateStudyProgram(programStudi string, students *string) {
-	*students = programStudi
+	*students = programStudi //
 }
 
 func main() {
